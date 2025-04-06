@@ -313,6 +313,44 @@
             background: rgba(220, 53, 69, 0.2);
             color: #dc3545;
         }
+
+        .results-card {
+            background: rgba(10, 25, 47, 0.95);
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            height: 100%;
+            transition: transform 0.3s ease;
+        }
+
+        .results-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .results-card-header {
+            background: rgba(13, 110, 253, 0.1);
+            padding: 1rem;
+            border-bottom: 2px solid #0d6efd;
+            border-radius: 12px 12px 0 0;
+        }
+
+        .results-card-title {
+            color: #0d6efd;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .results-card-body {
+            padding: 1.5rem;
+        }
+
+        .results-row {
+            margin-bottom: 2rem;
+        }
+
+        .results-section {
+            margin-bottom: 2rem;
+        }
     </style>
 </head>
 <body>
@@ -374,18 +412,69 @@
         </div>
 
         <div id="results" class="d-none">
-            <div class="evaluation-card">
+            <div class="evaluation-card mb-4">
                 <div class="evaluation-header">
-                    <h2 class="text-center mb-0">RFP Compliance Evaluation Results</h2>
+                    <h2 class="text-center mb-3">RFP Compliance Evaluation Results</h2>
                 </div>
                 <div class="evaluation-content" id="evaluationContent">
-                    <div class="evaluation-section" id="coreCompliance"></div>
-                    <div class="evaluation-section" id="submissionDocs"></div>
-                    <div class="evaluation-section" id="additionalQuals"></div>
-                    <div class="evaluation-section" id="requiredActions"></div>
-                    <div class="evaluation-section" id="overallAssessment"></div>
+                    <div class="row results-row">
+                        <div class="col-md-6 mb-4">
+                            <div class="results-card">
+                                <div class="results-card-header">
+                                    <h5 class="results-card-title">Core Compliance Status</h5>
+                                </div>
+                                <div class="results-card-body">
+                                    <div id="coreCompliance"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <div class="results-card">
+                                <div class="results-card-header">
+                                    <h5 class="results-card-title">Required Submission Documents</h5>
+                                </div>
+                                <div class="results-card-body">
+                                    <div id="submissionDocs"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row results-row">
+                        <div class="col-md-6 mb-4">
+                            <div class="results-card">
+                                <div class="results-card-header">
+                                    <h5 class="results-card-title">Additional Desired Qualifications</h5>
+                                </div>
+                                <div class="results-card-body">
+                                    <div id="additionalQuals"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <div class="results-card">
+                                <div class="results-card-header">
+                                    <h5 class="results-card-title">Overall Compliance Assessment</h5>
+                                </div>
+                                <div class="results-card-body">
+                                    <div id="overallAssessment"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="results-card">
+                                <div class="results-card-header">
+                                    <h5 class="results-card-title">Required Actions</h5>
+                                </div>
+                                <div class="results-card-body">
+                                    <div id="requiredActions"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="text-center pb-4">
+                <div class="text-center py-4">
                     <button id="downloadPdf" class="btn btn-primary btn-lg">
                         <i class="fas fa-file-pdf me-2"></i>Download PDF Report
                     </button>
@@ -617,24 +706,19 @@
         function updateRegularView(result) {
             // Original display logic for the web interface
             document.getElementById('coreCompliance').innerHTML = `
-                <h5 class='section-header'>Core Compliance Status</h5>
                 <ol class="evaluation-list">${formatToNumberedList(result.sections.core_compliance)}</ol>`;
             
             document.getElementById('submissionDocs').innerHTML = `
-                <h5 class='section-header'>Required Submission Documents</h5>
                 <ol class="evaluation-list">${formatToNumberedList(result.sections.submission_requirements)}</ol>`;
             
             document.getElementById('additionalQuals').innerHTML = `
-                <h5 class='section-header'>Additional Desired Qualifications</h5>
                 <ol class="evaluation-list">${formatToNumberedList(result.sections.additional_qualifications)}</ol>`;
             
-            document.getElementById('requiredActions').innerHTML = `
-                <h5 class='section-header'>Required Actions</h5>
-                <div class="evaluation-list">${formatRequiredActions(result.sections.required_actions)}</div>`;
-            
             document.getElementById('overallAssessment').innerHTML = `
-                <h5 class='section-header'>Overall Compliance Assessment</h5>
                 <ol class="evaluation-list">${formatToNumberedList(result.sections.compliance_assessment)}</ol>`;
+            
+            document.getElementById('requiredActions').innerHTML = `
+                <div class="evaluation-list">${formatRequiredActions(result.sections.required_actions)}</div>`;
         }
 
         function updatePDFView(result) {
