@@ -1,0 +1,179 @@
+/* General Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+    transition: all 0.3s ease-in-out;
+}
+
+/* Background Color (Black) */
+body {
+    background: url('../images/5630939.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    color: #e0e0e0;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* Header and Footer Styling */
+header, footer {
+    background: linear-gradient(135deg, #0a192f, #1c1c3c);
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 40px;
+    box-shadow: 0 2px 10px rgba(255, 255, 255, 0.1);
+}
+
+/* Buttons */
+.cta-btn {
+    background-color: #2979ff;
+    color: white;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: 0.3s;
+}
+
+.cta-btn:hover {
+    background-color: #1e5cd3;
+    transform: scale(1.05);
+    box-shadow: 0 5px 15px rgba(41, 121, 255, 0.4);
+}
+
+/* Main Content */
+main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 50px 20px;
+    margin-top: 5%;
+}
+
+/* Hero Section */
+.hero {
+    max-width: 600px;
+    margin-bottom: 50px;
+    animation: fadeIn 1.5s ease-in-out;
+}
+
+.hero h2 {
+    font-size: 36px;
+    margin-bottom: 15px;
+}
+
+.hero p {
+    font-size: 18px;
+    margin-bottom: 20px;
+}
+
+/* Features Section */
+.features {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    flex-wrap: wrap;
+    max-width: 1000px;
+}
+
+/* Feature Cards */
+.feature {
+    background: linear-gradient(135deg, #0a192f, #1c1c3c);
+    padding: 25px;
+    border-radius: 12px;
+    width: 300px;
+    text-align: center;
+    transition: 0.5s ease-in-out;
+    opacity: 0;
+    transform: translateY(50px);
+    box-shadow: 0 4px 10px rgba(255, 255, 255, 0.1);
+}
+
+/* Icons */
+.icon {
+    font-size: 40px;
+    color: #2979ff;
+    margin-bottom: 15px;
+}
+
+/* Feature Hover Effect */
+.feature:hover {
+    transform: translateY(-10px) scale(1.05);
+}
+
+/* Footer */
+footer {
+    text-align: center;
+    padding: 15px;
+    font-size: 14px;
+    margin-top: auto;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+.feature {
+    background: linear-gradient(135deg, #0a192f, #1c1c3c);
+    padding: 25px;
+    border-radius: 12px;
+    width: 300px;
+    text-align: center;
+    transition: 0.5s ease-in-out;
+    opacity: 0;
+    transform: translateY(50px);
+    box-shadow: 0 4px 10px rgba(255, 255, 255, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.feature:hover {
+    transform: translateY(-10px) scale(1.05);
+    box-shadow: 0 10px 20px rgba(41, 121, 255, 0.3);
+}
+
+/* Hover Effect: Adding a Glowing Border */
+.feature::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(45deg, rgba(41, 121, 255, 0.3), rgba(255, 255, 255, 0.2));
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+    border-radius: 12px;
+}
+
+.feature:hover::before {
+    opacity: 1;
+}
