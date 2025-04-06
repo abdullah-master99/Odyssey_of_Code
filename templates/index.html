@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RFP Eligibility Evaluator</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <style>
@@ -60,11 +61,257 @@
         .evaluation-list li:last-child {
             margin-bottom: 0;
         }
+
+        .action-category {
+            font-weight: bold;
+            color: #0d6efd;
+            margin-top: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .action-items {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
         .upload-success {
             color: #198754;
             font-size: 0.875rem;
             margin-top: 0.5rem;
             display: none;
+        }
+        
+        /* PDF Specific Styling */
+        .pdf-content {
+            display: none;
+            background: white;
+            color: #333;
+            padding: 40px;
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+        }
+
+        .pdf-header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #0d6efd;
+            padding-bottom: 20px;
+        }
+
+        .pdf-section {
+            margin-bottom: 25px;
+            page-break-inside: avoid;
+        }
+
+        .pdf-section-title {
+            color: #0d6efd;
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #dee2e6;
+            padding-bottom: 5px;
+        }
+
+        .pdf-list {
+            margin: 0;
+            padding-left: 20px;
+        }
+
+        .pdf-list li {
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        .eligibility-status {
+            font-size: 16px;
+            font-weight: bold;
+            padding: 8px 15px;
+            border-radius: 4px;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+
+        .status-eligible {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status-not-eligible {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        /* Loading Animation Styles */
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #0d6efd;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 15px;
+        }
+
+        .loading-text {
+            color: #fff;
+            font-size: 18px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Critical Action Styles */
+        .action-category.critical {
+            color: #dc3545;
+        }
+
+        .action-items.critical li {
+            color: #dc3545;
+            font-weight: 500;
+        }
+
+        /* PDF specific critical styles */
+        .pdf-list .action-category.critical {
+            color: #dc3545;
+        }
+
+        .pdf-list .action-items.critical li {
+            color: #dc3545;
+        }
+
+        .upload-card {
+            background: rgba(10, 25, 47, 0.95);
+            border: 2px dashed #3a3a3a;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .upload-card:hover {
+            border-color: #0d6efd;
+            transform: translateY(-2px);
+        }
+
+        .upload-zone {
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .upload-icon {
+            font-size: 2.5rem;
+            color: #0d6efd;
+            margin-bottom: 1rem;
+        }
+
+        .upload-text {
+            color: #e0e0e0;
+            margin-bottom: 1rem;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .upload-btn {
+            background: linear-gradient(45deg, #0d6efd, #0099ff);
+            border: none;
+            padding: 0.5rem 1.5rem;
+            border-radius: 25px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .upload-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(13, 110, 253, 0.2);
+        }
+
+        .evaluation-card {
+            background: linear-gradient(135deg, rgba(10, 25, 47, 0.95), rgba(28, 59, 90, 0.95));
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            margin-bottom: 2rem;
+        }
+
+        .evaluation-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .evaluation-content {
+            padding: 1.5rem;
+        }
+
+        .evaluation-section {
+            background: rgba(31, 31, 31, 0.5);
+            border: 1px solid rgba(58, 58, 58, 0.5);
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .evaluation-section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .section-header {
+            color: #0d6efd;
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #0d6efd;
+        }
+
+        .evaluation-list li {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .evaluation-list li:last-child {
+            border-bottom: none;
+        }
+
+        .success-badge {
+            display: none;  /* Hide by default */
+            padding: 0.35rem 0.75rem;
+            border-radius: 20px;
+            background: rgba(25, 135, 84, 0.2);
+            color: #198754;
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+            opacity: 0;  /* Start with 0 opacity */
+            transition: opacity 0.3s ease-in-out;  /* Smooth transition */
+        }
+
+        .success-badge.show {
+            opacity: 1;
+            display: inline-block;
+        }
+
+        .error-badge {
+            background: rgba(220, 53, 69, 0.2);
+            color: #dc3545;
         }
     </style>
 </head>
@@ -78,58 +325,139 @@
         
         <div class="row mb-4">
             <div class="col-md-6">
-                <div class="card">
-                    <div class="card-body">
+                <div class="upload-card">
+                    <div class="upload-zone" id="rfpDropZone">
+                        <i class="fas fa-file-pdf upload-icon"></i>
                         <h5 class="card-title">Upload RFP Document</h5>
+                        <p class="upload-text">Drag & drop your RFP PDF here or click to browse</p>
                         <form id="rfpForm" action="{{ url_for('upload_rfp') }}" method="POST" enctype="multipart/form-data">
-                            <input type="file" class="form-control bg-dark text-light" id="rfpFile" name="rfp_file" accept=".pdf" required>
-                            <button type="submit" class="btn btn-primary mt-2">Upload RFP</button>
-                            <div id="rfpSuccess" class="upload-success">Upload complete</div>
+                            <input type="file" class="file-input" id="rfpFile" name="rfp_file" accept=".pdf" required>
+                            <button type="submit" class="btn upload-btn">
+                                <i class="fas fa-upload me-2"></i>Upload RFP
+                            </button>
                         </form>
+                        <div id="rfpSuccess" class="success-badge">
+                            <i class="fas fa-check-circle me-1"></i>Upload complete
+                        </div>
                     </div>
                 </div>
             </div>
             <div class="col-md-6">
-                <div class="card">
-                    <div class="card-body">
+                <div class="upload-card">
+                    <div class="upload-zone" id="companyDropZone">
+                        <i class="fas fa-building upload-icon"></i>
                         <h5 class="card-title">Upload Company Data</h5>
+                        <p class="upload-text">Drag & drop your company PDF here or click to browse</p>
                         <form id="companyForm" action="{{ url_for('upload_company_data') }}" method="POST" enctype="multipart/form-data">
-                            <input type="file" class="form-control bg-dark text-light" id="companyFile" name="company_file" accept=".pdf" required>
-                            <button type="submit" class="btn btn-primary mt-2">Upload Company Data</button>
-                            <div id="companySuccess" class="upload-success">Upload complete</div>
+                            <input type="file" class="file-input" id="companyFile" name="company_file" accept=".pdf" required>
+                            <button type="submit" class="btn upload-btn">
+                                <i class="fas fa-upload me-2"></i>Upload Company Data
+                            </button>
                         </form>
+                        <div id="companySuccess" class="success-badge">
+                            <i class="fas fa-check-circle me-1"></i>Upload complete
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="card mb-4">
-            <div class="card-body text-center">
-                <h5 class="card-title">Evaluate Eligibility</h5>
-                <button id="evaluateBtn" class="btn btn-success" disabled>Evaluate Eligibility</button>
+        <div class="evaluation-card mb-4">
+            <div class="evaluation-header text-center">
+                <h5 class="card-title mb-0">Evaluate Eligibility</h5>
+            </div>
+            <div class="evaluation-content text-center">
+                <button id="evaluateBtn" class="btn btn-success btn-lg" disabled>
+                    <i class="fas fa-chart-bar me-2"></i>Start Evaluation
+                </button>
             </div>
         </div>
 
         <div id="results" class="d-none">
-            <div class="card">
-                <div class="card-body">
-                    <h2 class="mb-4 text-center">RFP Compliance Evaluation Results</h2>
-                    <div id="evaluationContent">
-                        <div class="evaluation-section" id="coreCompliance"></div>
-                        <div class="evaluation-section" id="submissionDocs"></div>
-                        <div class="evaluation-section" id="additionalQuals"></div>
-                        <div class="evaluation-section" id="overallAssessment"></div>
-                        <div class="evaluation-section" id="requiredActions"></div>
-                    </div>
-                    <button id="downloadPdf" class="btn btn-primary mt-3">Download PDF</button>
+            <div class="evaluation-card">
+                <div class="evaluation-header">
+                    <h2 class="text-center mb-0">RFP Compliance Evaluation Results</h2>
+                </div>
+                <div class="evaluation-content" id="evaluationContent">
+                    <div class="evaluation-section" id="coreCompliance"></div>
+                    <div class="evaluation-section" id="submissionDocs"></div>
+                    <div class="evaluation-section" id="additionalQuals"></div>
+                    <div class="evaluation-section" id="requiredActions"></div>
+                    <div class="evaluation-section" id="overallAssessment"></div>
+                </div>
+                <div class="text-center pb-4">
+                    <button id="downloadPdf" class="btn btn-primary btn-lg">
+                        <i class="fas fa-file-pdf me-2"></i>Download PDF Report
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <div id="pdfContent" class="pdf-content">
+            <div class="pdf-header">
+                <h1>RFP Compliance Evaluation Report</h1>
+                <p>Generated on <span id="reportDate"></span></p>
+            </div>
+            <div id="pdfEvaluationContent">
+                <div class="pdf-section">
+                    <h2 class="pdf-section-title">Core Compliance Status</h2>
+                    <div id="pdfCoreCompliance"></div>
+                </div>
+                <div class="pdf-section">
+                    <h2 class="pdf-section-title">Required Submission Documents</h2>
+                    <div id="pdfSubmissionDocs"></div>
+                </div>
+                <div class="pdf-section">
+                    <h2 class="pdf-section-title">Additional Desired Qualifications</h2>
+                    <div id="pdfAdditionalQuals"></div>
+                </div>
+                <div class="pdf-section">
+                    <h2 class="pdf-section-title">Required Actions</h2>
+                    <div id="pdfRequiredActions"></div>
+                </div>
+                <div class="pdf-section">
+                    <h2 class="pdf-section-title">Overall Compliance Assessment</h2>
+                    <div id="pdfOverallAssessment"></div>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Add Loading Overlay -->
+    <div class="loading-overlay">
+        <div class="spinner"></div>
+        <div class="loading-text">Evaluating RFP Compliance...</div>
+    </div>
+
     <script>
         let uploadedRfp = null;
         let uploadedCompanyData = null;
+
+        // Clear any existing success messages and states on page load
+        window.addEventListener('load', () => {
+            document.getElementById('rfpSuccess').classList.remove('show');
+            document.getElementById('companySuccess').classList.remove('show');
+            document.getElementById('evaluateBtn').disabled = true;
+            uploadedRfp = null;
+            uploadedCompanyData = null;
+        });
+
+        function showMessage(elementId, message, isError = false) {
+            const elem = document.getElementById(elementId);
+            elem.textContent = message;
+            if (isError) {
+                elem.classList.add('error-badge');
+                elem.classList.add('show');
+                setTimeout(() => {
+                    elem.classList.remove('show');
+                    elem.classList.remove('error-badge');
+                }, 3000);
+            } else {
+                elem.innerHTML = '<i class="fas fa-check-circle me-1"></i>' + message;
+                elem.classList.remove('error-badge');
+                elem.classList.add('show');
+            }
+        }
 
         document.getElementById('rfpForm').addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -137,22 +465,22 @@
             const file = document.getElementById('rfpFile').files[0];
             formData.append('rfp_file', file);
 
-            const response = await fetch('{{ url_for("upload_rfp") }}', {
-                method: 'POST',
-                body: formData
-            });
+            try {
+                const response = await fetch('{{ url_for("upload_rfp") }}', {
+                    method: 'POST',
+                    body: formData
+                });
 
-            const result = await response.json();
-            if (result.status === 'success') {
-                uploadedRfp = result.filename;
-                checkEvaluationEnabled();
-                document.getElementById('rfpSuccess').style.display = 'block';
-            } else {
-                // Show error in red beneath the button
-                const successElem = document.getElementById('rfpSuccess');
-                successElem.style.color = '#dc3545';
-                successElem.textContent = 'Error: ' + result.error;
-                successElem.style.display = 'block';
+                const result = await response.json();
+                if (result.status === 'success') {
+                    uploadedRfp = result.filename;
+                    checkEvaluationEnabled();
+                    showMessage('rfpSuccess', 'Upload complete');
+                } else {
+                    showMessage('rfpSuccess', 'Error: ' + result.error, true);
+                }
+            } catch (error) {
+                showMessage('rfpSuccess', 'Error: Upload failed', true);
             }
         });
 
@@ -162,49 +490,64 @@
             const file = document.getElementById('companyFile').files[0];
             formData.append('company_file', file);
 
-            const response = await fetch('{{ url_for("upload_company_data") }}', {
-                method: 'POST',
-                body: formData
-            });
+            try {
+                const response = await fetch('{{ url_for("upload_company_data") }}', {
+                    method: 'POST',
+                    body: formData
+                });
 
-            const result = await response.json();
-            if (result.status === 'success') {
-                uploadedCompanyData = result.filename;
-                checkEvaluationEnabled();
-                document.getElementById('companySuccess').style.display = 'block';
-            } else {
-                // Show error in red beneath the button
-                const successElem = document.getElementById('companySuccess');
-                successElem.style.color = '#dc3545';
-                successElem.textContent = 'Error: ' + result.error;
-                successElem.style.display = 'block';
+                const result = await response.json();
+                if (result.status === 'success') {
+                    uploadedCompanyData = result.filename;
+                    checkEvaluationEnabled();
+                    showMessage('companySuccess', 'Upload complete');
+                } else {
+                    showMessage('companySuccess', 'Error: ' + result.error, true);
+                }
+            } catch (error) {
+                showMessage('companySuccess', 'Error: Upload failed', true);
             }
         });
 
         // Reset success message when a new file is selected
         document.getElementById('rfpFile').addEventListener('change', () => {
-            document.getElementById('rfpSuccess').style.display = 'none';
+            document.getElementById('rfpSuccess').classList.remove('show');
         });
 
         document.getElementById('companyFile').addEventListener('change', () => {
-            document.getElementById('companySuccess').style.display = 'none';
+            document.getElementById('companySuccess').classList.remove('show');
         });
 
         function checkEvaluationEnabled() {
             document.getElementById('evaluateBtn').disabled = !(uploadedRfp && uploadedCompanyData);
         }
 
+        function showLoading() {
+            document.querySelector('.loading-overlay').style.display = 'flex';
+        }
+
+        function hideLoading() {
+            document.querySelector('.loading-overlay').style.display = 'none';
+        }
+
         document.getElementById('evaluateBtn').addEventListener('click', async () => {
-            const response = await fetch('/evaluate', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ rfp_file: uploadedRfp, company_file: uploadedCompanyData })
-            });
-            const result = await response.json();
-            if (result.status === 'success') {
-                displayResults(result);
-            } else {
-                alert('Error during evaluation: ' + result.message);
+            showLoading();
+            try {
+                const response = await fetch('/evaluate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ rfp_file: uploadedRfp, company_file: uploadedCompanyData })
+                });
+                const result = await response.json();
+                if (result.status === 'success') {
+                    displayResults(result);
+                } else {
+                    alert('Error during evaluation: ' + result.message);
+                }
+            } catch (error) {
+                alert('Error during evaluation: ' + error.message);
+            } finally {
+                hideLoading();
             }
         });
 
@@ -224,11 +567,55 @@
             return cleanedItems.map(item => `<li>${item}</li>`).join('');
         }
 
+        function formatRequiredActions(text) {
+            const sections = {
+                critical: [],
+                important: [],
+                optional: []
+            };
+            
+            let currentSection = null;
+            const lines = text.split('\n');
+            
+            lines.forEach(line => {
+                line = line.trim();
+                if (line.includes('Critical (must be completed to become eligible):')) {
+                    currentSection = 'critical';
+                } else if (line.includes('Important (needed for submission):')) {
+                    currentSection = 'important';
+                } else if (line.includes('Optional (for competitive advantage):')) {
+                    currentSection = 'optional';
+                } else if (line && currentSection && !line.match(/^[-_*\s]{3,}$/)) {
+                    sections[currentSection].push(line.replace(/^[-*0-9.\s]+/, '').trim());
+                }
+            });
+
+            let html = '';
+            if (sections.critical.length) {
+                html += `<div class="action-category critical">Critical (must be completed to become eligible):</div>
+                        <ul class="action-items critical">${sections.critical.map(item => `<li>${item}</li>`).join('')}</ul>`;
+            }
+            if (sections.important.length) {
+                html += `<div class="action-category">Important (needed for submission):</div>
+                        <ul class="action-items">${sections.important.map(item => `<li>${item}</li>`).join('')}</ul>`;
+            }
+            if (sections.optional.length) {
+                html += `<div class="action-category">Optional (for competitive advantage):</div>
+                        <ul class="action-items">${sections.optional.map(item => `<li>${item}</li>`).join('')}</ul>`;
+            }
+            return html;
+        }
 
         function displayResults(result) {
             document.getElementById('results').classList.remove('d-none');
             
-            // Format and display each section as a numbered list
+            // Update the display for both regular view and PDF view
+            updateRegularView(result);
+            updatePDFView(result);
+        }
+
+        function updateRegularView(result) {
+            // Original display logic for the web interface
             document.getElementById('coreCompliance').innerHTML = `
                 <h5 class='section-header'>Core Compliance Status</h5>
                 <ol class="evaluation-list">${formatToNumberedList(result.sections.core_compliance)}</ol>`;
@@ -241,52 +628,80 @@
                 <h5 class='section-header'>Additional Desired Qualifications</h5>
                 <ol class="evaluation-list">${formatToNumberedList(result.sections.additional_qualifications)}</ol>`;
             
+            document.getElementById('requiredActions').innerHTML = `
+                <h5 class='section-header'>Required Actions</h5>
+                <div class="evaluation-list">${formatRequiredActions(result.sections.required_actions)}</div>`;
+            
             document.getElementById('overallAssessment').innerHTML = `
                 <h5 class='section-header'>Overall Compliance Assessment</h5>
                 <ol class="evaluation-list">${formatToNumberedList(result.sections.compliance_assessment)}</ol>`;
+        }
+
+        function updatePDFView(result) {
+            // Set report date
+            document.getElementById('reportDate').textContent = new Date().toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+
+            // Update PDF sections with formatted content
+            document.getElementById('pdfCoreCompliance').innerHTML = `
+                <ol class="pdf-list">${formatToNumberedList(result.sections.core_compliance)}</ol>`;
             
-            document.getElementById('requiredActions').innerHTML = `
-                <h5 class='section-header'>Required Actions</h5>
-                <ol class="evaluation-list">${formatToNumberedList(result.sections.required_actions)}</ol>`;
+            document.getElementById('pdfSubmissionDocs').innerHTML = `
+                <ol class="pdf-list">${formatToNumberedList(result.sections.submission_requirements)}</ol>`;
+            
+            document.getElementById('pdfAdditionalQuals').innerHTML = `
+                <ol class="pdf-list">${formatToNumberedList(result.sections.additional_qualifications)}</ol>`;
+            
+            document.getElementById('pdfRequiredActions').innerHTML = `
+                <div class="pdf-list">${formatRequiredActions(result.sections.required_actions)}</div>`;
+            
+            document.getElementById('pdfOverallAssessment').innerHTML = `
+                <ol class="pdf-list">${formatToNumberedList(result.sections.compliance_assessment)}</ol>`;
         }
 
         document.getElementById('downloadPdf').addEventListener('click', async () => {
             try {
                 const { jsPDF } = window.jspdf;
-                const doc = new jsPDF('p', 'mm', 'a4');
-                const element = document.getElementById('evaluationContent');
+                const doc = new jsPDF('p', 'pt', 'a4');
+                const pdfContent = document.getElementById('pdfContent');
                 
-                // Get the computed height of the content
-                const contentHeight = element.offsetHeight;
+                // Temporarily make PDF content visible for capture
+                pdfContent.style.display = 'block';
                 
                 // Create canvas with better quality
-                const canvas = await html2canvas(element, {
-                    scale: 2, // Better quality
+                const canvas = await html2canvas(pdfContent, {
+                    scale: 2,
                     useCORS: true,
                     logging: false,
-                    backgroundColor: '#1f1f1f' // Match your dark theme
+                    backgroundColor: '#ffffff',
+                    windowWidth: pdfContent.scrollWidth,
+                    windowHeight: pdfContent.scrollHeight
                 });
+                
+                // Hide PDF content again
+                pdfContent.style.display = 'none';
 
-                // Calculate dimensions
-                const imgWidth = 210; // A4 width in mm
-                const pageHeight = 295; // A4 height in mm
+                // PDF dimensions
+                const imgWidth = 595.28; // A4 width in points
+                const pageHeight = 841.89; // A4 height in points
                 const imgHeight = (canvas.height * imgWidth) / canvas.width;
                 
-                // Convert canvas to image
-                const imgData = canvas.toDataURL('image/png');
-
-                // Add image to PDF (possibly multiple pages if content is long)
+                // Add image to PDF with proper scaling
                 let heightLeft = imgHeight;
                 let position = 0;
                 let page = 1;
 
-                doc.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                // First page
+                doc.addImage(canvas, 'PNG', 0, position, imgWidth, imgHeight, '', 'FAST');
                 heightLeft -= pageHeight;
 
                 // Add new pages if content is too long
                 while (heightLeft >= 0) {
                     doc.addPage();
-                    doc.addImage(imgData, 'PNG', 0, -pageHeight * page, imgWidth, imgHeight);
+                    doc.addImage(canvas, 'PNG', 0, -pageHeight * page, imgWidth, imgHeight, '', 'FAST');
                     heightLeft -= pageHeight;
                     page++;
                 }
@@ -298,6 +713,64 @@
                 alert('Error generating PDF. Please try again.');
             }
         });
+
+        // Enhance dropzone handling
+        function setupDropZone(dropZoneId, fileInputId) {
+            const dropZone = document.getElementById(dropZoneId);
+            const fileInput = document.getElementById(fileInputId);
+
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                dropZone.addEventListener(eventName, preventDefaults, false);
+            });
+
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+
+            ['dragenter', 'dragover'].forEach(eventName => {
+                dropZone.addEventListener(eventName, highlight, false);
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                dropZone.addEventListener(eventName, unhighlight, false);
+            });
+
+            function highlight(e) {
+                dropZone.classList.add('border-primary');
+            }
+
+            function unhighlight(e) {
+                dropZone.classList.remove('border-primary');
+            }
+
+            dropZone.addEventListener('drop', handleDrop, false);
+
+            function handleDrop(e) {
+                const dt = e.dataTransfer;
+                fileInput.files = dt.files;
+                fileInput.dispatchEvent(new Event('change'));
+                const form = fileInput.closest('form');
+                if (form) {
+                    form.dispatchEvent(new Event('submit'));
+                }
+            }
+
+            dropZone.addEventListener('click', () => {
+                fileInput.click();
+            });
+
+            fileInput.addEventListener('change', () => {
+                const form = fileInput.closest('form');
+                if (form) {
+                    form.dispatchEvent(new Event('submit'));
+                }
+            });
+        }
+
+        // Initialize drop zones
+        setupDropZone('rfpDropZone', 'rfpFile');
+        setupDropZone('companyDropZone', 'companyFile');
 
     </script>
 </body>

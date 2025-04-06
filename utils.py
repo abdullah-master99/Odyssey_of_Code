@@ -11,7 +11,7 @@ from datetime import datetime
 from dotenv import load_dotenv
 from langchain_groq import ChatGroq
 from sentence_transformers import SentenceTransformer
-from typing import List, Optional
+from typing import List, Optional, Dict, Any
 from langchain_core.messages import HumanMessage
 
 # Configure logging to suppress specific PDFMiner warnings
@@ -24,8 +24,7 @@ class LLMError(Exception):
 # Load environment variables
 load_dotenv()
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
-EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL")
-LLM_MODEL = os.getenv("LLM_MODEL")
+EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "all-mpnet-base-v2")
 
 # Define base directory and directory structure
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -70,24 +69,19 @@ logger = logging.getLogger(__name__)
 
 # Initialize embedding model
 try:
-    embedding_model = SentenceTransformer('all-mpnet-base-v2')  # This model produces 768-dimensional embeddings
-    logger.info(f"Loaded embedding model: all-mpnet-base-v2")
+    embedding_model = SentenceTransformer(EMBEDDING_MODEL)  # This model produces 768-dimensional embeddings
+    logger.info(f"Loaded embedding model: {EMBEDDING_MODEL}")
 except Exception as e:
     logger.error(f"Error loading embedding model: {str(e)}")
     raise
 
-# Initialize LLM
-try:
-    llm = ChatGroq(
-        api_key=GROQ_API_KEY,
-        model_name=LLM_MODEL,
-        temperature=0.1,
-        max_tokens=2048
-    )
-    logger.info(f"Initialized LLM: {LLM_MODEL}")
-except Exception as e:
-    logger.error(f"Error initializing LLM: {str(e)}")
-    raise
+# Initialize LLM with Groq client
+llm = ChatGroq(
+    groq_api_key=GROQ_API_KEY,
+    model_name="llama-3.3-70b-versatile",
+    temperature=0.7,
+    max_tokens=2048
+)
 
 # Initialize ChromaDB clients for different collections
 try:

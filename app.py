@@ -7,6 +7,10 @@ from agents.company_data_agent import CompanyDataAgent
 from agents.master_agent import EligibilityEvaluatorAgent
 from utils import logger, feedback_analyzer, DIRS, result_tracker, reset_collections
 
+# Reset collections on startup to use new model
+logger.info("Resetting ChromaDB collections for new model...")
+reset_collections()
+
 app = Flask(__name__)
 
 # Configure upload settings
@@ -15,6 +19,16 @@ ALLOWED_EXTENSIONS = {'pdf'}
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+def validate_file_type(file):
+    """Validate that the file is a PDF"""
+    if not file or not file.filename:
+        return False, "No file provided"
+        
+    if not file.filename.lower().endswith('.pdf'):
+        return False, "Only PDF files are allowed"
+    
+    return True, None
 
 def create_crew():
     """Create and return a CrewAI crew with all agents and their coordinated workflow"""
@@ -80,18 +94,19 @@ def upload_rfp():
     """Handle RFP document upload"""
     try:
         logger.info("RFP upload request received")
-        logger.info(f"Files in request: {request.files}")
         
         if 'rfp_file' not in request.files:
             logger.error("No rfp_file field in request")
-            return jsonify({"error": "No file provided"}), 400
+            return jsonify({"status": "error", "error": "No file provided"}), 400
         
         file = request.files['rfp_file']
         logger.info(f"Received file: {file.filename}")
         
-        if file.filename == '' or not allowed_file(file.filename):
-            logger.error(f"Invalid file: {file.filename}")
-            return jsonify({"error": "Invalid file format. Only PDF files are allowed."}), 400
+        # Validate file
+        is_valid, error_message = validate_file_type(file)
+        if not is_valid:
+            logger.error(f"Invalid file: {error_message}")
+            return jsonify({"status": "error", "error": error_message}), 400
         
         filename = secure_filename(file.filename)
         file_path = os.path.join(DIRS['data']['rfps'], filename)
@@ -103,28 +118,29 @@ def upload_rfp():
             "message": "RFP file uploaded successfully",
             "filename": filename
         }), 200
-    
+        
     except Exception as e:
         logger.error(f"Error uploading RFP file: {str(e)}")
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"status": "error", "error": str(e)}), 500
 
 @app.route('/upload/company-data', methods=['POST'])
 def upload_company_data():
     """Handle company data document upload"""
     try:
         logger.info("Company data upload request received")
-        logger.info(f"Files in request: {request.files}")
         
         if 'company_file' not in request.files:
             logger.error("No company_file field in request")
-            return jsonify({"error": "No file provided"}), 400
+            return jsonify({"status": "error", "error": "No file provided"}), 400
         
         file = request.files['company_file']
         logger.info(f"Received file: {file.filename}")
         
-        if file.filename == '' or not allowed_file(file.filename):
-            logger.error(f"Invalid file: {file.filename}")
-            return jsonify({"error": "Invalid file format. Only PDF files are allowed."}), 400
+        # Validate file
+        is_valid, error_message = validate_file_type(file)
+        if not is_valid:
+            logger.error(f"Invalid file: {error_message}")
+            return jsonify({"status": "error", "error": error_message}), 400
         
         filename = secure_filename(file.filename)
         file_path = os.path.join(DIRS['data']['company_data'], filename)
@@ -139,7 +155,7 @@ def upload_company_data():
     
     except Exception as e:
         logger.error(f"Error uploading company data file: {str(e)}")
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"status": "error", "error": str(e)}), 500
 
 @app.route('/evaluate', methods=['POST'])
 def evaluate_eligibility():
