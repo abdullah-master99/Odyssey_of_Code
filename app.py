@@ -2,9 +2,9 @@ from flask import Flask, request, jsonify, render_template
 import os
 from werkzeug.utils import secure_filename
 from crewai import Crew, Task
-from agents.rfp_extractor_agent import RFPAgent
-from agents.company_data_agent import CompanyDataAgent
-from agents.master_agent import EligibilityEvaluatorAgent
+from agents.subject_pdf_agent import SubjectPDFAgent
+from agents.question_paper_agent import QuestionPaperAgent
+from agents.paper_generator_agent import TeacherAssistantAgent
 from utils import logger, feedback_analyzer, DIRS, result_tracker, reset_collections
 
 # Reset collections on startup to use new model
@@ -36,36 +36,36 @@ def create_crew():
     
     try:
         # Initialize agents
-        rfp_agent = RFPAgent()
-        company_agent = CompanyDataAgent()
-        evaluator_agent = EligibilityEvaluatorAgent()
+        rfp_agent = SubjectPDFAgent()
+        company_agent = QuestionPaperAgent()
+        evaluator_agent = TeacherAssistantAgent()
         logger.info("All agents initialized successfully")
         
         # Define tasks with proper dependencies and expected outputs
         rfp_task = Task(
-            description="Analyze RFP document and extract key requirements",
+            description="Analyze subject or chapter PDF and extract relevant information for question paper generation",
             agent=rfp_agent,
-            name="analyze_rfp",
-            expected_output="Dictionary containing classified RFP requirements (must-have vs good-to-have), scope of work, and technical specifications"
+            name="analyze_subject_pdf",
+            expected_output="Dictionary containing extracted key topics, concepts, and relevant details for question paper creation"
         )
         
         company_task = Task(
-            description="Analyze company capabilities and qualifications",
+            description="Analyze attached previous year/sample question paper to extract relevant information for question paper generation",
             agent=company_agent,
             name="analyze_company",
-            expected_output="Dictionary containing company capabilities, experience, certifications, and resources"
+            expected_output="Dictionary containing extracted key topics, patterns, and insights from previous/sample question papers for question paper creation"
         )
         
         evaluation_task = Task(
-            description="Evaluate company eligibility for RFP",
+            description="Generate relevant question paper based on extracted information",
             agent=evaluator_agent,
-            name="evaluate_eligibility",
-            expected_output="Detailed eligibility analysis with separate assessment of must-have and good-to-have requirements",
+            name="generate_question_paper",
+            expected_output="A well-structured question paper covering key topics and concepts extracted from the provided PDFs",
             context=[
-                "Evaluate eligibility based ONLY on must-have requirements",
-                "Provide separate analysis of good-to-have features as competitive advantages",
-                "Generate comprehensive analysis with scoring based on mandatory requirements",
-                "Include suggestions for both critical gaps and optional improvements"
+            "Collect information dependencies from analyzed subject and sample question papers",
+            "Generate a question paper that aligns with the extracted key topics and patterns",
+            "Ensure the question paper includes a mix of difficulty levels and covers all critical areas",
+            "Provide a comprehensive and balanced set of questions suitable for the intended audience"
             ],
             dependencies=[rfp_task, company_task]
         )
@@ -115,7 +115,7 @@ def upload_rfp():
         
         return jsonify({
             "status": "success",
-            "message": "RFP file uploaded successfully",
+            "message": "chapter file uploaded successfully",
             "filename": filename
         }), 200
         
@@ -149,7 +149,7 @@ def upload_company_data():
         
         return jsonify({
             "status": "success",
-            "message": "Company data file uploaded successfully",
+            "message": "question paper file uploaded successfully",
             "filename": filename
         }), 200
     
@@ -172,10 +172,10 @@ def evaluate_eligibility():
             return jsonify({"error": "RFP or company file not found. Please upload files first."}), 404
 
         # Initialize evaluator agent
-        evaluator = EligibilityEvaluatorAgent()
+        evaluator = TeacherAssistantAgent()
         
         # Execute evaluation
-        result = evaluator.evaluate_eligibility(rfp_path, company_path)
+        result = evaluator.generate_question_paper(rfp_path, company_path)
         
         if result["status"] == "error":
             return jsonify({
@@ -185,20 +185,24 @@ def evaluate_eligibility():
 
         # Save evaluation result
         evaluation_id = result_tracker.save_result(result)
-        
+        print(result)
         # Structure the response to match test evaluation format
         response = {
             "status": "success",
             "evaluation_id": evaluation_id,
-            "evaluation": result["evaluation"],  # Send the full evaluation text
+            "question_paper": result["question_paper"],  # Send the full question paper text
             "sections": {
-                "core_compliance": result["evaluation"].split("Core Compliance Status:")[1].split("Required Submission Documents:")[0].strip(),
-                "submission_requirements": result["evaluation"].split("Required Submission Documents:")[1].split("Additional Desired Qualifications:")[0].strip(),
-                "additional_qualifications": result["evaluation"].split("Additional Desired Qualifications:")[1].split("Overall Compliance Assessment:")[0].strip(),
-                "compliance_assessment": result["evaluation"].split("Overall Compliance Assessment:")[1].split("Required Actions:")[0].strip(),
-                "required_actions": result["evaluation"].split("Required Actions:")[1].strip()
+            "multiple_choice": result["question_paper"].get("multiple_choice", []),
+            "short_answer": result["question_paper"].get("short_answer", []),
+            "long_answer": result["question_paper"].get("long_answer", []),
+            "case_studies": result["question_paper"].get("case_studies", []),
+            "diagrams": result["question_paper"].get("diagrams", [])
             },
-            "is_compliant": result.get("is_compliant", False)
+            "metadata": {
+            "total_questions": result["question_paper"].get("total_questions", 0),
+            "difficulty_distribution": result["question_paper"].get("difficulty_distribution", {}),
+            "topics_covered": result["question_paper"].get("topics_covered", [])
+            }
         }
         
         return jsonify(response), 200
