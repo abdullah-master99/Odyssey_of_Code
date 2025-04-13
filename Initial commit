@@ -1,0 +1,23 @@
+[33mcommit 449bf4aa5e2f47dc6d4e38ec668dae3871255560[m[33m ([m[1;36mHEAD -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Author: Shejole Prem <shejoleprem01@gmail.com>
+Date:   Sun Apr 13 14:07:01 2025 +0530
+
+    Initial commit
+
+[33mcommit cd3e3edd034ac8627751fca7eb1157a2045766f9[m
+Author: abdullah-master <abdullahmaster2434@gmail.com>
+Date:   Sun Apr 6 12:59:45 2025 +0530
+
+    Added result UI
+
+[33mcommit 833d0cd84457d2c60730e063e22f613f444c2950[m
+Author: abdullah-master <abdullahmaster2434@gmail.com>
+Date:   Sun Apr 6 12:36:28 2025 +0530
+
+    Second last commit
+
+[33mcommit 439910e0a4133e0a5e07e711f4da1cb52b5af3d4[m[33m ([m[1;31morigin/master[m[33m)[m
+Author: abdullah-master <abdullahmaster2434@gmail.com>
+Date:   Sun Apr 6 06:47:50 2025 +0530
+
+    Initial commit: Adding RFP Analysis System with Flask web interface
