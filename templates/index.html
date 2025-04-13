@@ -357,7 +357,7 @@
     <div class="container mt-5">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <a href="{{ url_for('home') }}" class="btn btn-outline-light">&larr; Back</a>
-            <h1 class="text-center flex-grow-1">Exam Paper Generator</h1>
+            <h1 class="text-center flex-grow-1">RFP Eligibility Evaluator</h1>
             <div style="width: 85px"></div><!-- Spacer to center the heading -->
         </div>
         
@@ -366,12 +366,12 @@
                 <div class="upload-card">
                     <div class="upload-zone" id="rfpDropZone">
                         <i class="fas fa-file-pdf upload-icon"></i>
-                        <h5 class="card-title">Upload subject/chapter Document</h5>
+                        <h5 class="card-title">Upload RFP Document</h5>
                         <p class="upload-text">Drag & drop your RFP PDF here or click to browse</p>
                         <form id="rfpForm" action="{{ url_for('upload_rfp') }}" method="POST" enctype="multipart/form-data">
                             <input type="file" class="file-input" id="rfpFile" name="rfp_file" accept=".pdf" required>
                             <button type="submit" class="btn upload-btn">
-                                <i class="fas fa-upload me-2"></i>Upload Chapter/Question paper
+                                <i class="fas fa-upload me-2"></i>Upload RFP
                             </button>
                         </form>
                         <div id="rfpSuccess" class="success-badge">
@@ -384,12 +384,12 @@
                 <div class="upload-card">
                     <div class="upload-zone" id="companyDropZone">
                         <i class="fas fa-building upload-icon"></i>
-                        <h5 class="card-title">Upload sample/previous year question paper</h5>
+                        <h5 class="card-title">Upload Company Data</h5>
                         <p class="upload-text">Drag & drop your company PDF here or click to browse</p>
                         <form id="companyForm" action="{{ url_for('upload_company_data') }}" method="POST" enctype="multipart/form-data">
                             <input type="file" class="file-input" id="companyFile" name="company_file" accept=".pdf" required>
                             <button type="submit" class="btn upload-btn">
-                                <i class="fas fa-upload me-2"></i>Upload Question Paper
+                                <i class="fas fa-upload me-2"></i>Upload Company Data
                             </button>
                         </form>
                         <div id="companySuccess" class="success-badge">
@@ -402,109 +402,83 @@
 
         <div class="evaluation-card mb-4">
             <div class="evaluation-header text-center">
-                <h5 class="card-title mb-0">Generate Paper</h5>
+                <h5 class="card-title mb-0">Evaluate Eligibility</h5>
             </div>
             <div class="evaluation-content text-center">
                 <button id="evaluateBtn" class="btn btn-success btn-lg" disabled>
-                    <i class="fas fa-chart-bar me-2"></i>Generate
+                    <i class="fas fa-chart-bar me-2"></i>Start Evaluation
                 </button>
             </div>
         </div>
 
         <div id="results" class="d-none">
             <div class="evaluation-card mb-4">
-            <div class="evaluation-header">
-                <h2 class="text-center mb-3">Generated Question Paper</h2>
-            </div>
-            <div class="evaluation-content" id="evaluationContent">
-                <div class="row results-row">
-                <div class="col-12 mb-4">
-                    <div class="results-card">
-                    <div class="results-card-header">
-                        <h5 class="results-card-title">Full Question Paper</h5>
+                <div class="evaluation-header">
+                    <h2 class="text-center mb-3">RFP Compliance Evaluation Results</h2>
+                </div>
+                <div class="evaluation-content" id="evaluationContent">
+                    <div class="row results-row">
+                        <div class="col-md-6 mb-4">
+                            <div class="results-card">
+                                <div class="results-card-header">
+                                    <h5 class="results-card-title">Core Compliance Status</h5>
+                                </div>
+                                <div class="results-card-body">
+                                    <div id="coreCompliance"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <div class="results-card">
+                                <div class="results-card-header">
+                                    <h5 class="results-card-title">Required Submission Documents</h5>
+                                </div>
+                                <div class="results-card-body">
+                                    <div id="submissionDocs"></div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="results-card-body">
-                        <div id="questionPaper"></div>
+                    <div class="row results-row">
+                        <div class="col-md-6 mb-4">
+                            <div class="results-card">
+                                <div class="results-card-header">
+                                    <h5 class="results-card-title">Additional Desired Qualifications</h5>
+                                </div>
+                                <div class="results-card-body">
+                                    <div id="additionalQuals"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <div class="results-card">
+                                <div class="results-card-header">
+                                    <h5 class="results-card-title">Overall Compliance Assessment</h5>
+                                </div>
+                                <div class="results-card-body">
+                                    <div id="overallAssessment"></div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="results-card">
+                                <div class="results-card-header">
+                                    <h5 class="results-card-title">Required Actions</h5>
+                                </div>
+                                <div class="results-card-body">
+                                    <div id="requiredActions"></div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
+                <div class="text-center py-4">
+                    <button id="downloadPdf" class="btn btn-primary btn-lg">
+                        <i class="fas fa-file-pdf me-2"></i>Download PDF Report
+                    </button>
                 </div>
-                <div class="row results-row">
-                <div class="col-md-6 mb-4">
-                    <div class="results-card">
-                    <div class="results-card-header">
-                        <h5 class="results-card-title">Multiple Choice Questions</h5>
-                    </div>
-                    <div class="results-card-body">
-                        <div id="multipleChoice"></div>
-                    </div>
-                    </div>
-                </div>
-                <div class="col-md-6 mb-4">
-                    <div class="results-card">
-                    <div class="results-card-header">
-                        <h5 class="results-card-title">Short Answer Questions</h5>
-                    </div>
-                    <div class="results-card-body">
-                        <div id="shortAnswer"></div>
-                    </div>
-                    </div>
-                </div>
-                </div>
-                <div class="row results-row">
-                <div class="col-md-6 mb-4">
-                    <div class="results-card">
-                    <div class="results-card-header">
-                        <h5 class="results-card-title">Long Answer Questions</h5>
-                    </div>
-                    <div class="results-card-body">
-                        <div id="longAnswer"></div>
-                    </div>
-                    </div>
-                </div>
-                <div class="col-md-6 mb-4">
-                    <div class="results-card">
-                    <div class="results-card-header">
-                        <h5 class="results-card-title">Case Studies</h5>
-                    </div>
-                    <div class="results-card-body">
-                        <div id="caseStudies"></div>
-                    </div>
-                    </div>
-                </div>
-                </div>
-                <div class="row results-row">
-                <div class="col-md-6 mb-4">
-                    <div class="results-card">
-                    <div class="results-card-header">
-                        <h5 class="results-card-title">Diagrams</h5>
-                    </div>
-                    <div class="results-card-body">
-                        <div id="diagrams"></div>
-                    </div>
-                    </div>
-                </div>
-                <div class="col-md-6 mb-4">
-                    <div class="results-card">
-                    <div class="results-card-header">
-                        <h5 class="results-card-title">Metadata</h5>
-                    </div>
-                    <div class="results-card-body">
-                        <ul>
-                        <li><strong>Total Questions:</strong> <span id="totalQuestions"></span></li>
-                        <li><strong>Difficulty Distribution:</strong> <span id="difficultyDistribution"></span></li>
-                        <li><strong>Topics Covered:</strong> <span id="topicsCovered"></span></li>
-                        </ul>
-                    </div>
-                    </div>
-                </div>
-                </div>
-            </div>
-            <div class="text-center py-4">
-                <button id="downloadPdf" class="btn btn-primary btn-lg">
-                <i class="fas fa-file-pdf me-2"></i>Download PDF Report
-                </button>
-            </div>
             </div>
         </div>
         
@@ -515,23 +489,23 @@
             </div>
             <div id="pdfEvaluationContent">
                 <div class="pdf-section">
-                    <h2 class="pdf-section-title">Multiple Choice Questions</h2>
+                    <h2 class="pdf-section-title">Core Compliance Status</h2>
                     <div id="pdfCoreCompliance"></div>
                 </div>
                 <div class="pdf-section">
-                    <h2 class="pdf-section-title">Short Answer Questions</h2>
+                    <h2 class="pdf-section-title">Required Submission Documents</h2>
                     <div id="pdfSubmissionDocs"></div>
                 </div>
                 <div class="pdf-section">
-                    <h2 class="pdf-section-title">Long Answer Questions</h2>
+                    <h2 class="pdf-section-title">Additional Desired Qualifications</h2>
                     <div id="pdfAdditionalQuals"></div>
                 </div>
                 <div class="pdf-section">
-                    <h2 class="pdf-section-title">Case Studies</h2>
+                    <h2 class="pdf-section-title">Required Actions</h2>
                     <div id="pdfRequiredActions"></div>
                 </div>
                 <div class="pdf-section">
-                    <h2 class="pdf-section-title">Diagrams</h2>
+                    <h2 class="pdf-section-title">Overall Compliance Assessment</h2>
                     <div id="pdfOverallAssessment"></div>
                 </div>
             </div>
